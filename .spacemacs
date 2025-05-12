@@ -49,7 +49,8 @@ This function should only modify configuration layer settings."
      (org :variables
           org-enable-roam-support t
           org-roam-directory "~/Documents/org-roam"
-          org-roam-db-autosync-enable t)
+          org-roam-db-autosync-enable t
+          org-enable-roam-ui t)
      ;;  (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
@@ -583,23 +584,24 @@ before packages are loaded."
   (spacemacs/set-leader-keys
     "arl" 'org-roam-buffer-toggle
     "ari" 'org-roam-node-insert
-    "art" 'org-roam-dailies-goto-today
+    "art" 'org-roam-dailies-capture-today
     "arm" 'org-roam-dailies-goto-tomorrow
     "ary" 'org-roam-dailies-goto-yesterday
     "arf" 'org-roam-node-find
-    "arg" 'org-roam-graph)
+    "arg" 'org-roam-graph
+    "ars" 'org-roam-db-sync)
 
   (spacemacs/declare-prefix-for-mode 'org-mode "mr" "org-roam")
   (spacemacs/set-leader-keys-for-major-mode 'org-mode
     "rl" 'org-roam-buffer-toggle
-    ;;"rb" 'org-roam-buffer-toggle
     "ri" 'org-roam-node-insert
     "rf" 'org-roam-node-find
     "ry" 'org-roam-dailies-goto-yesterday
     "rm" 'org-roam-dailies-goto-tomorrow
-    "rt" 'org-roam-dailies-goto-today
+    "rt" 'org-roam-dailies-capture-today
     "ri" 'org-roam-node-insert
-    "rg" 'org-roam-graph)
+    "rg" 'org-roam-graph
+    "rs" 'org-roam-db-sync)
   )
 
 ;;(load-file "~/.emacs.d/private/org-roam/packages.el")
@@ -643,17 +645,19 @@ This function is called at the very end of Spacemacs initialization."
                           magit-section markdown-mode multi-line nameless
                           nerd-icons open-junk-file org org-cliplink org-contrib
                           org-download org-mime org-pomodoro org-present
-                          org-projectile org-rich-yank org-roam org-superstar
-                          orgit orgit-forge overseer paradox password-generator
-                          pcre2el popwin quickrun rainbow-delimiters restart-emacs
-                          smeargle space-doc spaceline spacemacs-purpose-popwin
+                          org-projectile org-rich-yank org-roam org-roam-ui
+                          org-superstar orgit orgit-forge overseer paradox
+                          password-generator pcre2el popwin quickrun
+                          rainbow-delimiters restart-emacs simple-httpd smeargle
+                          space-doc spaceline spacemacs-purpose-popwin
                           spacemacs-whitespace-cleanup sqlite3
                           string-edit-at-point string-inflection symbol-overlay
                           symon term-cursor toc-org transient treemacs-evil
                           treemacs-icons-dired treemacs-magit treemacs-persp
                           treemacs-projectile treepy undo-fu undo-fu-session
-                          uuidgen vi-tilde-fringe volatile-highlights vundo wgrep
-                          winum with-editor writeroom-mode ws-butler yaml)))
+                          uuidgen vi-tilde-fringe volatile-highlights vundo
+                          websocket wgrep winum with-editor writeroom-mode
+                          ws-butler yaml)))
   (custom-set-faces
    ;; custom-set-faces was added by Custom.
    ;; If you edit it by hand, you could mess it up, so be careful.
