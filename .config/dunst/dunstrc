@@ -1,0 +1,49 @@
+[global]
+# Font usata nelle notifiche
+font = JetBrains Mono 10
+# Abilita markup per usare emoji, grassetto, colori
+markup = yes
+
+# Formato: titolo (bold) + testo, con emoji giÃ  usate negli script
+format = "<b>%s</b>\n%b"
+
+# Posizione (top right, bottom right, center, etc.)
+geometry = 300x60-10+50
+
+
+# Colori (sfondo, testo, bordo)
+background = "#282c34"
+foreground = "#bbc2cf"
+frame_color = "#51afef"
+separator_color = "#51afef"
+
+# Ombra leggera
+shadow = yes
+
+# Bordo
+border = 2
+
+# Icone dimensione massima
+max_icon_size = 48
+
+# Allineamento testo
+alignment = left
+vertical_alignment = center
+
+[urgency_low]
+timeout = 1
+background = "#3b4252"
+foreground = "#d8dee9"
+frame_color = "#4c566a"
+
+[urgency_normal]
+timeout = 3
+background = "#282c34"
+foreground = "#bbc2cf"
+frame_color = "#51afef"
+
+[urgency_critical]
+timeout = 5
+background = "#ff6c6b"
+foreground = "#282c34"
+frame_color = "#ff6c6b"
