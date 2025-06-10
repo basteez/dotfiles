@@ -27,9 +27,18 @@ vim.g.maplocalleader = "\\"
 require("lazy").setup({
   spec = {
     -- add your plugins herel
-    { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
-    {'nvim-telescope/telescope.nvim', tag = '0.1.8', dependencies = { 'nvim-lua/plenary.nvim' }},
-    {"nvim-treesitter/nvim-treesitter", branch = 'master', lazy = false, build = ":TSUpdate"}
+    {"catppuccin/nvim", name = "catppuccin", priority = 1000},
+    {"nvim-telescope/telescope.nvim", tag = "0.1.8", dependencies = { "nvim-lua/plenary.nvim" }},
+    {"nvim-treesitter/nvim-treesitter", branch = 'master', lazy = false, build = ":TSUpdate"},
+    {"nvim-neo-tree/neo-tree.nvim", branch = "v3.x", dependencies = {
+                                                        "nvim-lua/plenary.nvim",
+                                                        "nvim-tree/nvim-web-devicons",
+                                                        "MunifTanjim/nui.nvim"},
+      lazy = false,
+      opts = {
+        -- fill any relevant options here
+      },
+    }
   },
   install = { colorscheme = { "habamax" } },
   checker = { enabled = true },
@@ -56,3 +65,7 @@ require'nvim-treesitter.configs'.setup {
     additional_vim_regex_highlighting = false,
   },
 }
+
+-- neotree
+vim.keymap.set('n', '<leader>n', ':Neotree filesystem toggle left<CR>', {})
+
