@@ -94,3 +94,6 @@
         org-roam-ui-follow t
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t))
+
+;; ORG-BULLETS
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
