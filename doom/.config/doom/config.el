@@ -1,5 +1,4 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
-
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
 
@@ -24,7 +23,6 @@
 ;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
 ;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
 ;;
-(setq doom-font (font-spec :family "Source Code Pro" :size 14))
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
 ;; refresh your font settings. If Emacs still can't find your font, it likely
@@ -41,8 +39,12 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org/")
+(setq org-directory "~/Documents/org-roam/org/")
 
+;; ORG ROAM
+(setq org-roam-directory "~/Documents/org-roam/")
+(setq org-roam-db-autosync-enable t)
+(setq org-enable-roam-ui t)
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
@@ -75,19 +77,3 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
-
-;; Org-roam configuration
-(after! org-roam
-  (setq org-roam-directory (file-truename "~/Documents/org-roam")
-        org-roam-database-connector 'sqlite-builtin
-        org-roam-db-gc-threshold most-positive-fixnum
-        org-id-link-to-org-use-id t)
-  
-  (map! :leader
-        :prefix "n"
-        :desc "org-roam buffer toggle" "l" #'org-roam-buffer-toggle
-        :desc "org-roam node insert" "i" #'org-roam-node-insert
-        :desc "org-roam node find" "f" #'org-roam-node-find
-        :desc "org-roam ref find" "r" #'org-roam-ref-find
-        :desc "org-roam show graph" "g" #'org-roam-show-graph
-        :desc "org-roam capture" "c" #'org-roam-capture))
