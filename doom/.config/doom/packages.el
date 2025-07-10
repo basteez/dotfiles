@@ -49,3 +49,5 @@
 ;; (unpin! t)
 (package! org-roam-ui)
 (package! org-bullets)
+(package! copilot
+  :recipe (:host github :repo "copilot-emacs/copilot.el" :files ("*.el")))
