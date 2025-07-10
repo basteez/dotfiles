@@ -49,5 +49,6 @@
 ;; (unpin! t)
 (package! org-roam-ui)
 (package! org-bullets)
+;; run `npm install -g @github/copilot-language-server` in order to make copilot work
 (package! copilot
   :recipe (:host github :repo "copilot-emacs/copilot.el" :files ("*.el")))
