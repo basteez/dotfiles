@@ -49,7 +49,6 @@ This function should only modify configuration layer settings."
      (org :variables
           org-enable-roam-support t
           org-roam-directory "~/Documents/org-roam"
-          org-roam-db-autosync-enable t
           org-enable-roam-ui t)
      ;;  (shell :variables
      ;;        shell-default-height 30
@@ -574,6 +573,9 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
+  ;; enable org-roam autosync
+  (org-roam-db-autosync-mode)
+  
   ;;(global-set-key (kbd "C-c n l") 'org-roam-buffer-toggle)
   ;;(global-set-key (kbd "C-c n f") 'org-roam-node-find)
   ;;(global-set-key (kbd "C-c n i") 'org-roam-node-insert)
