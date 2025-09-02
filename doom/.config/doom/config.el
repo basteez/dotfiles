@@ -1,6 +1,20 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
+;;(setq treesit-language-source-alist
+;;      '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+;;        (c "https://github.com/tree-sitter/tree-sitter-c")
+;;        (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
+;;        (css "https://github.com/tree-sitter/tree-sitter-css")
+;;        (html "https://github.com/tree-sitter/tree-sitter-html")
+;;        (java "https://github.com/tree-sitter/tree-sitter-java")
+;;        (javascript "https://github.com/tree-sitter/tree-sitter-javascript")
+;;        (json "https://github.com/tree-sitter/tree-sitter-json")
+;;        (python "https://github.com/tree-sitter/tree-sitter-python")
+;;        (typescript "https://github.com/tree-sitter/tree-sitter-typescript")
+;;        (elisp "https://github.com/Wilfred/tree-sitter-elisp")))
+
+
 
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
