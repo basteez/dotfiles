@@ -3,7 +3,7 @@
     email = tiz.basile@gmail.com
 
 [core]
-    editor = vim 
+	editor = nvim
 
 [alias]
     co = checkout
