@@ -35,7 +35,7 @@
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type t)
+(setq display-line-numbers-type 'relative)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -45,6 +45,109 @@
 (setq org-roam-directory "~/Documents/org-roam/")
 (setq org-roam-db-autosync-enable t)
 (setq org-enable-roam-ui t)
+
+;;
+;; LSP CONFIGURATION - Auto-enable and optimize
+;;
+
+;; LSP Performance optimizations
+(after! lsp-mode
+  (setq lsp-idle-delay 0.1  ; Faster response
+        lsp-log-io nil      ; Disable logging for performance
+        lsp-completion-provider :none  ; Use company/corfu instead
+        lsp-enable-file-watchers t
+        lsp-file-watch-threshold 5000
+        lsp-headerline-breadcrumb-enable t
+        lsp-modeline-diagnostics-enable t
+        lsp-modeline-code-actions-enable t
+        lsp-lens-enable t
+        lsp-signature-auto-activate t
+        lsp-signature-render-documentation t
+        lsp-semantic-tokens-enable t
+        lsp-enable-indentation t
+        lsp-enable-on-type-formatting t
+        lsp-enable-snippet t
+        lsp-eldoc-enable-hover t))
+
+;; Auto-start LSP for supported languages
+(after! lsp-mode
+  ;; TypeScript/JavaScript
+  (add-hook 'typescript-mode-hook #'lsp!)
+  (add-hook 'typescript-tsx-mode-hook #'lsp!)
+  (add-hook 'js-mode-hook #'lsp!)
+  (add-hook 'js2-mode-hook #'lsp!)
+  (add-hook 'rjsx-mode-hook #'lsp!)
+  
+  ;; Python
+  (add-hook 'python-mode-hook #'lsp!)
+  
+  ;; Rust
+  (add-hook 'rust-mode-hook #'lsp!)
+  (add-hook 'rustic-mode-hook #'lsp!)
+  
+  ;; Go
+  (add-hook 'go-mode-hook #'lsp!)
+  
+  ;; Java
+  (add-hook 'java-mode-hook #'lsp!)
+  
+  ;; JSON/YAML/TOML
+  (add-hook 'json-mode-hook #'lsp!)
+  (add-hook 'yaml-mode-hook #'lsp!)
+  (add-hook 'toml-mode-hook #'lsp!)
+  
+  ;; Docker
+  (add-hook 'dockerfile-mode-hook #'lsp!)
+  
+  ;; Web (HTML/CSS)
+  (add-hook 'web-mode-hook #'lsp!)
+  (add-hook 'css-mode-hook #'lsp!)
+  (add-hook 'scss-mode-hook #'lsp!))
+
+;; LSP-UI Configuration (similar to LazyVim UI)
+(after! lsp-ui
+  (setq lsp-ui-doc-enable t
+        lsp-ui-doc-show-with-cursor t
+        lsp-ui-doc-delay 0.2
+        lsp-ui-doc-position 'at-point
+        lsp-ui-doc-max-width 80
+        lsp-ui-doc-max-height 20
+        lsp-ui-sideline-enable t
+        lsp-ui-sideline-show-hover nil
+        lsp-ui-sideline-show-diagnostics t
+        lsp-ui-sideline-show-code-actions t
+        lsp-ui-peek-enable t
+        lsp-ui-peek-show-directory t))
+
+;; DAP (Debugger) Configuration
+(after! dap-mode
+  (setq dap-auto-configure-mode t)
+  (require 'dap-node)
+  (require 'dap-python)
+  (require 'dap-go)
+  (require 'dap-lldb)  ; For Rust
+  (dap-auto-configure-mode 1))
+
+;; Tree-sitter configuration
+(after! tree-sitter
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+;; Company completion (corfu alternative)
+(after! company
+  (setq company-idle-delay 0.1
+        company-minimum-prefix-length 1
+        company-show-numbers t
+        company-tooltip-align-annotations t
+        company-tooltip-flip-when-above t))
+
+;; Format on save (like LazyVim)
+(add-hook 'before-save-hook #'lsp-format-buffer t)
+(add-hook 'before-save-hook #'lsp-organize-imports t)
+
+;; Direnv support (for project-specific environments)
+(after! direnv
+  (direnv-mode))
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.

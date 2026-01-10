@@ -47,8 +47,37 @@
 ;; (unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
+
+;;
+;; ORG & NOTE-TAKING
+;;
 (package! org-roam-ui)
 (package! org-bullets)
+
+;;
+;; AI ASSISTANCE
+;;
 ;; run `npm install -g @github/copilot-language-server` in order to make copilot work
 (package! copilot
   :recipe (:host github :repo "copilot-emacs/copilot.el" :files ("*.el")))
+
+;;
+;; LSP SERVERS & LANGUAGE SUPPORT
+;; Most LSP servers are installed automatically by lsp-mode when you open a file
+;; However, you may need to install some manually:
+;;
+;; TypeScript/JavaScript: npm install -g typescript-language-server typescript
+;; Python: pip install python-lsp-server[all] or pip install pyright
+;; Rust: rustup component add rust-analyzer
+;; Go: go install golang.org/x/tools/gopls@latest
+;; Java: Installed automatically by lsp-java
+;; JSON: npm install -g vscode-langservers-extracted
+;; YAML: npm install -g yaml-language-server
+;; Docker: npm install -g dockerfile-language-server-nodejs
+;; HTML/CSS: npm install -g vscode-langservers-extracted
+;; Markdown: npm install -g unified-language-server
+;;
+
+;; Additional language packages for better support
+(package! typescript-mode)
+(package! toml-mode)
