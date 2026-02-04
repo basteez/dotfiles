@@ -70,14 +70,17 @@
 ;; Python: pip install python-lsp-server[all] or pip install pyright
 ;; Rust: rustup component add rust-analyzer
 ;; Go: go install golang.org/x/tools/gopls@latest
-;; Java: Installed automatically by lsp-java
+;; Java: Auto-downloaded by lsp-java. Requires JDK 17+. Run M-x lsp-install-server RET jdtls
 ;; JSON: npm install -g vscode-langservers-extracted
 ;; YAML: npm install -g yaml-language-server
 ;; Docker: npm install -g dockerfile-language-server-nodejs
 ;; HTML/CSS: npm install -g vscode-langservers-extracted
-;; Markdown: npm install -g unified-language-server
+;; Markdown: npm install -g marksman (recommended) or unified-language-server
+;; Lua: Install lua-language-server (brew install lua-language-server on macOS)
+;; Bash/Shell: npm install -g bash-language-server
 ;;
 
 ;; Additional language packages for better support
 (package! typescript-mode)
 (package! toml-mode)
+(package! lua-mode)

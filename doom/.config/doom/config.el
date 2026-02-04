@@ -39,10 +39,10 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/Documents/org-roam/org/")
+(setq org-directory "~/Documents/org/")
 
 ;; ORG ROAM
-(setq org-roam-directory "~/Documents/org-roam/")
+(setq org-roam-directory "~/Documents/org/org-roam/")
 (setq org-roam-db-autosync-enable t)
 (setq org-enable-roam-ui t)
 
@@ -50,11 +50,13 @@
 ;; LSP CONFIGURATION - Auto-enable and optimize
 ;;
 
+;; Enable LSP for all +lsp flagged languages (deferred for performance)
+(setq lsp-auto-guess-root t)
+
 ;; LSP Performance optimizations
 (after! lsp-mode
-  (setq lsp-idle-delay 0.1  ; Faster response
-        lsp-log-io nil      ; Disable logging for performance
-        lsp-completion-provider :none  ; Use company/corfu instead
+  (setq lsp-idle-delay 0.1
+        lsp-log-io nil
         lsp-enable-file-watchers t
         lsp-file-watch-threshold 5000
         lsp-headerline-breadcrumb-enable t
@@ -69,42 +71,7 @@
         lsp-enable-snippet t
         lsp-eldoc-enable-hover t))
 
-;; Auto-start LSP for supported languages
-(after! lsp-mode
-  ;; TypeScript/JavaScript
-  (add-hook 'typescript-mode-hook #'lsp!)
-  (add-hook 'typescript-tsx-mode-hook #'lsp!)
-  (add-hook 'js-mode-hook #'lsp!)
-  (add-hook 'js2-mode-hook #'lsp!)
-  (add-hook 'rjsx-mode-hook #'lsp!)
-  
-  ;; Python
-  (add-hook 'python-mode-hook #'lsp!)
-  
-  ;; Rust
-  (add-hook 'rust-mode-hook #'lsp!)
-  (add-hook 'rustic-mode-hook #'lsp!)
-  
-  ;; Go
-  (add-hook 'go-mode-hook #'lsp!)
-  
-  ;; Java
-  (add-hook 'java-mode-hook #'lsp!)
-  
-  ;; JSON/YAML/TOML
-  (add-hook 'json-mode-hook #'lsp!)
-  (add-hook 'yaml-mode-hook #'lsp!)
-  (add-hook 'toml-mode-hook #'lsp!)
-  
-  ;; Docker
-  (add-hook 'dockerfile-mode-hook #'lsp!)
-  
-  ;; Web (HTML/CSS)
-  (add-hook 'web-mode-hook #'lsp!)
-  (add-hook 'css-mode-hook #'lsp!)
-  (add-hook 'scss-mode-hook #'lsp!))
-
-;; LSP-UI Configuration (similar to LazyVim UI)
+;; LSP-UI Configuration
 (after! lsp-ui
   (setq lsp-ui-doc-enable t
         lsp-ui-doc-show-with-cursor t
@@ -119,13 +86,44 @@
         lsp-ui-peek-enable t
         lsp-ui-peek-show-directory t))
 
+;; Flycheck (linter) integration with LSP
+(after! flycheck
+  (setq flycheck-check-syntax-automatically '(save mode-enabled idle-change)))
+
+;; LSP diagnostics via flycheck
+(setq lsp-diagnostics-provider :flycheck)
+
+;; Java LSP Configuration (lsp-java / jdtls)
+(setq lsp-java-workspace-dir (expand-file-name "~/.cache/java-workspace")
+      lsp-java-workspace-cache-dir (expand-file-name "~/.cache/java-workspace/.cache")
+      lsp-java-server-install-dir (expand-file-name "~/.local/share/eclipse.jdt.ls"))
+
+(after! lsp-java
+  (setq lsp-java-completion-enabled t
+        lsp-java-completion-guess-method-arguments t
+        lsp-java-completion-overwrite t
+        lsp-java-completion-favorite-static-members
+        '("org.junit.Assert.*"
+          "org.junit.jupiter.api.Assertions.*"
+          "java.util.Objects.requireNonNull"
+          "java.util.Objects.requireNonNullElse")
+        lsp-java-autobuild-enabled t
+        lsp-java-save-actions-organize-imports t
+        lsp-java-import-gradle-enabled t
+        lsp-java-import-maven-enabled t
+        lsp-java-references-code-lens-enabled t
+        lsp-java-implementations-code-lens-enabled t
+        lsp-java-format-on-type-enabled t
+        lsp-java-vmargs '("-XX:+UseParallelGC" "-XX:GCTimeRatio=4" "-XX:AdaptiveSizePolicyWeight=90" "-Xmx2G" "-Xms100m")))
+
 ;; DAP (Debugger) Configuration
 (after! dap-mode
   (setq dap-auto-configure-mode t)
   (require 'dap-node)
   (require 'dap-python)
   (require 'dap-go)
-  (require 'dap-lldb)  ; For Rust
+  (require 'dap-lldb)
+  (require 'dap-java)  ; Java debugging
   (dap-auto-configure-mode 1))
 
 ;; Tree-sitter configuration
@@ -133,17 +131,29 @@
   (global-tree-sitter-mode)
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
-;; Company completion (corfu alternative)
-(after! company
-  (setq company-idle-delay 0.1
-        company-minimum-prefix-length 1
-        company-show-numbers t
-        company-tooltip-align-annotations t
-        company-tooltip-flip-when-above t))
+;; Corfu completion (modern completion framework)
+(after! corfu
+  (setq corfu-auto t
+        corfu-auto-delay 0.0      ; No delay - instant popup
+        corfu-auto-prefix 1       ; Complete after 1 char
+        corfu-cycle t
+        corfu-preselect 'first    ; Preselect first candidate
+        corfu-scroll-margin 5
+        corfu-quit-no-match 'separator)
+  ;; Enable corfu in minibuffer for M-x etc
+  (global-corfu-mode))
 
-;; Format on save (like LazyVim)
-(add-hook 'before-save-hook #'lsp-format-buffer t)
-(add-hook 'before-save-hook #'lsp-organize-imports t)
+;; Ensure LSP completion works with corfu
+(after! lsp-mode
+  ;; Force LSP to use capf (corfu-compatible)
+  (setq lsp-completion-provider :capf)
+  ;; Enable completion
+  (setq lsp-completion-enable t)
+  ;; Make sure lsp-completion-mode is active
+  (add-hook 'lsp-mode-hook #'lsp-completion-mode))
+
+;; Format on save only when LSP is active (handled by Doom's format module)
+;; The (format +onsave) flag in init.el handles this properly
 
 ;; Direnv support (for project-specific environments)
 (after! direnv
