@@ -1,0 +1,1 @@
+/Users/tizianobasile/.config/emacs/straight/repos/nerd-icons.el/nerd-icons-faces.el

@@ -1,0 +1,1 @@
+/Users/tizianobasile/.config/emacs/straight/repos/themes/themes/doom-outrun-electric-theme.el
