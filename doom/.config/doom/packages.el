@@ -1,8 +1,13 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
 
-;; To install a package with Doom you must declare them here and run 'doom sync'
-;; on the command line, then restart Emacs for the changes to take effect -- or
+;; To install a package:
+;;
+;;   1. Declare them here in a `package!' statement,
+;;   2. Run 'doom sync' in the shell,
+;;   3. Restart Emacs.
+;;
+;; Use 'C-h f package\!' to look up documentation for the `package!' macro.
 
 
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
@@ -48,39 +53,10 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
 
-;;
+
 ;; ORG & NOTE-TAKING
 ;;
 (package! org-roam-ui)
 (package! org-bullets)
 
-;;
-;; AI ASSISTANCE
-;;
-;; run `npm install -g @github/copilot-language-server` in order to make copilot work
-(package! copilot
-  :recipe (:host github :repo "copilot-emacs/copilot.el" :files ("*.el")))
-
-;;
-;; LSP SERVERS & LANGUAGE SUPPORT
-;; Most LSP servers are installed automatically by lsp-mode when you open a file
-;; However, you may need to install some manually:
-;;
-;; TypeScript/JavaScript: npm install -g typescript-language-server typescript
-;; Python: pip install python-lsp-server[all] or pip install pyright
-;; Rust: rustup component add rust-analyzer
-;; Go: go install golang.org/x/tools/gopls@latest
-;; Java: Auto-downloaded by lsp-java. Requires JDK 17+. Run M-x lsp-install-server RET jdtls
-;; JSON: npm install -g vscode-langservers-extracted
-;; YAML: npm install -g yaml-language-server
-;; Docker: npm install -g dockerfile-language-server-nodejs
-;; HTML/CSS: npm install -g vscode-langservers-extracted
-;; Markdown: npm install -g marksman (recommended) or unified-language-server
-;; Lua: Install lua-language-server (brew install lua-language-server on macOS)
-;; Bash/Shell: npm install -g bash-language-server
-;;
-
-;; Additional language packages for better support
-(package! typescript-mode)
-(package! toml-mode)
-(package! lua-mode)
+(package! tldr)

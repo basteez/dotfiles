@@ -1,4 +1,5 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
+
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
 
@@ -41,142 +42,24 @@
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/Documents/org/")
 
-;; ORG ROAM
-(setq org-roam-directory "~/Documents/org/org-roam/")
-(setq org-roam-db-autosync-enable t)
-(setq org-enable-roam-ui t)
-
-;;
-;; LSP CONFIGURATION - Auto-enable and optimize
-;;
-
-;; Enable LSP for all +lsp flagged languages (deferred for performance)
-(setq lsp-auto-guess-root t)
-
-;; LSP Performance optimizations
-(after! lsp-mode
-  (setq lsp-idle-delay 0.1
-        lsp-log-io nil
-        lsp-enable-file-watchers t
-        lsp-file-watch-threshold 5000
-        lsp-headerline-breadcrumb-enable t
-        lsp-modeline-diagnostics-enable t
-        lsp-modeline-code-actions-enable t
-        lsp-lens-enable t
-        lsp-signature-auto-activate t
-        lsp-signature-render-documentation t
-        lsp-semantic-tokens-enable t
-        lsp-enable-indentation t
-        lsp-enable-on-type-formatting t
-        lsp-enable-snippet t
-        lsp-eldoc-enable-hover t))
-
-;; LSP-UI Configuration
-(after! lsp-ui
-  (setq lsp-ui-doc-enable t
-        lsp-ui-doc-show-with-cursor t
-        lsp-ui-doc-delay 0.2
-        lsp-ui-doc-position 'at-point
-        lsp-ui-doc-max-width 80
-        lsp-ui-doc-max-height 20
-        lsp-ui-sideline-enable t
-        lsp-ui-sideline-show-hover nil
-        lsp-ui-sideline-show-diagnostics t
-        lsp-ui-sideline-show-code-actions t
-        lsp-ui-peek-enable t
-        lsp-ui-peek-show-directory t))
-
-;; Flycheck (linter) integration with LSP
-(after! flycheck
-  (setq flycheck-check-syntax-automatically '(save mode-enabled idle-change)))
-
-;; LSP diagnostics via flycheck
-(setq lsp-diagnostics-provider :flycheck)
-
-;; Java LSP Configuration (lsp-java / jdtls)
-(setq lsp-java-workspace-dir (expand-file-name "~/.cache/java-workspace")
-      lsp-java-workspace-cache-dir (expand-file-name "~/.cache/java-workspace/.cache")
-      lsp-java-server-install-dir (expand-file-name "~/.local/share/eclipse.jdt.ls"))
-
-(after! lsp-java
-  (setq lsp-java-completion-enabled t
-        lsp-java-completion-guess-method-arguments t
-        lsp-java-completion-overwrite t
-        lsp-java-completion-favorite-static-members
-        '("org.junit.Assert.*"
-          "org.junit.jupiter.api.Assertions.*"
-          "java.util.Objects.requireNonNull"
-          "java.util.Objects.requireNonNullElse")
-        lsp-java-autobuild-enabled t
-        lsp-java-save-actions-organize-imports t
-        lsp-java-import-gradle-enabled t
-        lsp-java-import-maven-enabled t
-        lsp-java-references-code-lens-enabled t
-        lsp-java-implementations-code-lens-enabled t
-        lsp-java-format-on-type-enabled t
-        lsp-java-vmargs '("-XX:+UseParallelGC" "-XX:GCTimeRatio=4" "-XX:AdaptiveSizePolicyWeight=90" "-Xmx2G" "-Xms100m")))
-
-;; DAP (Debugger) Configuration
-(after! dap-mode
-  (setq dap-auto-configure-mode t)
-  (require 'dap-node)
-  (require 'dap-python)
-  (require 'dap-go)
-  (require 'dap-lldb)
-  (require 'dap-java)  ; Java debugging
-  (dap-auto-configure-mode 1))
-
-;; Tree-sitter configuration
-(after! tree-sitter
-  (global-tree-sitter-mode)
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
-
-;; Corfu completion (modern completion framework)
-(after! corfu
-  (setq corfu-auto t
-        corfu-auto-delay 0.0      ; No delay - instant popup
-        corfu-auto-prefix 1       ; Complete after 1 char
-        corfu-cycle t
-        corfu-preselect 'first    ; Preselect first candidate
-        corfu-scroll-margin 5
-        corfu-quit-no-match 'separator)
-  ;; Enable corfu in minibuffer for M-x etc
-  (global-corfu-mode))
-
-;; Ensure LSP completion works with corfu
-(after! lsp-mode
-  ;; Force LSP to use capf (corfu-compatible)
-  (setq lsp-completion-provider :capf)
-  ;; Enable completion
-  (setq lsp-completion-enable t)
-  ;; Make sure lsp-completion-mode is active
-  (add-hook 'lsp-mode-hook #'lsp-completion-mode))
-
-;; Format on save only when LSP is active (handled by Doom's format module)
-;; The (format +onsave) flag in init.el handles this properly
-
-;; Direnv support (for project-specific environments)
-(after! direnv
-  (direnv-mode))
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
-;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
+;; `with-eval-after-load' block, otherwise Doom's defaults may override your
+;; settings. E.g.
 ;;
-;;   (after! PACKAGE
+;;   (with-eval-after-load 'PACKAGE
 ;;     (setq x y))
 ;;
 ;; The exceptions to this rule:
 ;;
 ;;   - Setting file/directory variables (like `org-directory')
 ;;   - Setting variables which explicitly tell you to set them before their
-;;     package is loaded (see 'C-h v VARIABLE' to look up their documentation).
+;;     package is loaded (see 'C-h v VARIABLE' to look them up).
 ;;   - Setting doom variables (which start with 'doom-' or '+').
 ;;
 ;; Here are some additional functions/macros that will help you configure Doom.
 ;;
 ;; - `load!' for loading external *.el files relative to this one
-;; - `use-package!' for configuring packages
-;; - `after!' for running code after a package has loaded
 ;; - `add-load-path!' for adding directories to the `load-path', relative to
 ;;   this file. Emacs searches the `load-path' when you load packages with
 ;;   `require' or `use-package'.
@@ -191,6 +74,10 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
+;; ORG ROAM
+(setq org-roam-directory "~/Documents/org/org-roam/")
+(setq org-roam-db-autosync-enable t)
+(setq org-enable-roam-ui t)
 
 ;; BANNER
 (defun my-weebery-is-always-greater ()
@@ -232,14 +119,3 @@
 
 ;; ORG-BULLETS
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-
-
-;; COPILOT
-;; accept completion from copilot and fallback to company
-(use-package! copilot
-  :hook (prog-mode . copilot-mode)
-  :bind (:map copilot-completion-map
-              ("<tab>" . 'copilot-accept-completion)
-              ("TAB" . 'copilot-accept-completion)
-              ("C-TAB" . 'copilot-accept-completion-by-word)
-              ("C-<tab>" . 'copilot-accept-completion-by-word)))
