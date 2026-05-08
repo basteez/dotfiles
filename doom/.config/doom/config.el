@@ -119,3 +119,9 @@
 
 ;; ORG-BULLETS
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+;; CLAUDE CODE
+(use-package! claude-code-ide
+  :bind ("C-c C-'" . claude-code-ide-menu)
+  :config
+  (claude-code-ide-emacs-tools-setup))  ; exposes xref/project as MCP tools

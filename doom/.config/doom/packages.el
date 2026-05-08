@@ -59,4 +59,9 @@
 (package! org-roam-ui)
 (package! org-bullets)
 
+;; TLDR
 (package! tldr)
+
+;; CLAUDE CODE
+(package! claude-code-ide
+  :recipe (:host github :repo "manzaltu/claude-code-ide.el"))
