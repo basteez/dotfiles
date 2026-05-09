@@ -159,6 +159,113 @@
 ;; Tokens and cookies expire periodically; re-extract them when Slack stops
 ;; authenticating. `M-x slack-refresh-token' walks you through it interactively.
 ;; ---------------------------------------------------------------------------
+;; ---------------------------------------------------------------------------
+;; Setting up ~/.authinfo.gpg
+;;
+;; Slack credentials (and any other secrets used by auth-source) live in an
+;; encrypted ~/.authinfo.gpg file. The setup requires GPG plus a pinentry
+;; program that provides the passphrase prompt.
+;;
+;; ===========================================================================
+;; 1. Install GPG and pinentry
+;; ===========================================================================
+;;
+;;   macOS (Homebrew):
+;;     brew install gnupg pinentry-mac
+;;
+;;   Linux:
+;;     # Debian/Ubuntu
+;;     sudo apt install gnupg pinentry-gtk2     # or pinentry-qt / pinentry-curses
+;;
+;;     # Fedora
+;;     sudo dnf install gnupg2 pinentry-gtk
+;;
+;;     # Arch
+;;     sudo pacman -S gnupg pinentry
+;;
+;;   Pick the pinentry flavor that matches your environment: pinentry-gtk2 or
+;;   pinentry-qt for GUI sessions, pinentry-curses for headless / TTY work.
+;;
+;; ===========================================================================
+;; 2. Point gpg-agent at pinentry
+;; ===========================================================================
+;;
+;; Add the right path to ~/.gnupg/gpg-agent.conf:
+;;
+;;   macOS, Apple Silicon (M1/M2/M3/M4):
+;;     pinentry-program /opt/homebrew/bin/pinentry-mac
+;;
+;;   macOS, Intel:
+;;     pinentry-program /usr/local/bin/pinentry-mac
+;;
+;;   Linux (path depends on flavor; check with `which pinentry-gtk-2'):
+;;     pinentry-program /usr/bin/pinentry-gtk-2
+;;     # or /usr/bin/pinentry-qt, /usr/bin/pinentry-curses
+;;
+;; Then reload the agent:
+;;   gpgconf --kill gpg-agent
+;;
+;; ===========================================================================
+;; 3. Generate a GPG key (skip if you already have one)
+;; ===========================================================================
+;;
+;;   gpg --full-generate-key
+;;
+;; Choose RSA + RSA, 4096 bits, and set a passphrase. On macOS the
+;; pinentry-mac dialog can save it to the Keychain; on Linux pinentry-gnome3
+;; can store it in libsecret/gnome-keyring if available.
+;;
+;; Verify with:
+;;   gpg --list-secret-keys
+;;
+;; ===========================================================================
+;; 4. Create ~/.authinfo.gpg from inside Emacs
+;; ===========================================================================
+;;
+;; Always edit it via Emacs so the plaintext never hits disk:
+;;   C-x C-f ~/.authinfo.gpg
+;;
+;; Emacs prompts for the recipient key, then add lines like:
+;;
+;;   machine yourteam.slack.com login you@example.com password xoxc-...
+;;   machine yourteam.slack.com login you@example.com^cookie password xoxd-...
+;;
+;; Save with C-x C-s. The file is encrypted on save.
+;;
+;; ===========================================================================
+;; 5. Tell auth-source about it
+;; ===========================================================================
+;;
+;; Recent Emacs versions enable epa-file automatically, so .gpg files are
+;; decrypted transparently. Just set:
+;;
+;;   (setq auth-sources '("~/.authinfo.gpg"))
+;;
+;; ===========================================================================
+;; 6. Test
+;; ===========================================================================
+;;
+;;   M-: (auth-source-pick-first-password
+;;         :host "yourteam.slack.com" :user "you@example.com") RET
+;;
+;; Should return the token string. The first call triggers a pinentry prompt;
+;; subsequent ones in the same session use the gpg-agent cache (default 10
+;; minutes, tunable via `default-cache-ttl' in gpg-agent.conf).
+;;
+;; ===========================================================================
+;; Troubleshooting
+;; ===========================================================================
+;;
+;;   - No popup on save: wrong path in gpg-agent.conf. Check the location with
+;;     `which pinentry-mac' (macOS) or `which pinentry-gtk-2' (Linux).
+;;
+;;   - Passphrase prompt stuck in the minibuffer: gpg-agent wasn't restarted
+;;     after editing gpg-agent.conf. As a fallback you can force minibuffer
+;;     prompts with (setq epg-pinentry-mode 'loopback).
+;;
+;;   - On Linux, pinentry-gtk2 fails over SSH or TTY: switch to
+;;     pinentry-curses, or export GPG_TTY=$(tty) in your shell rc so gpg-agent
+;;     knows which terminal to use
 (use-package slack
   :bind (("C-c S K" . slack-stop)
          ("C-c S c" . slack-select-rooms)
