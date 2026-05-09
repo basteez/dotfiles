@@ -197,3 +197,5 @@
        :config
        ;;literate
        (default +bindings +smartparens))
+
+(setq auth-sources '("~/.authinfo.gpg"))

@@ -1,5 +1,6 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
+(load "~/.config/doom/private.el" t)
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
 
@@ -125,3 +126,83 @@
   :bind ("C-c C-'" . claude-code-ide-menu)
   :config
   (claude-code-ide-emacs-tools-setup))  ; exposes xref/project as MCP tools
+
+;; SLACK
+;; ---------------------------------------------------------------------------
+;; How to get the Slack token and cookie
+;;
+;; Slack no longer accepts the old `xoxs-' user tokens. You need a pair of
+;; credentials: a short-lived `xoxc-' token and a matching `d' cookie. Both
+;; must be extracted manually from a logged-in Slack session in the browser.
+;;
+;; 1. Get the token (xoxc-)
+;;    Open Slack in your browser (e.g. https://yourteam.slack.com) and log in.
+;;    Open DevTools (F12) -> Console and run this one-liner:
+;;
+;;    JSON.parse(localStorage.localConfig_v2)
+;;      .teams[document.location.pathname.match(/^\/client\/([TE][A-Z0-9]+)/)[1]]
+;;      .token
+;;
+;;    It returns a string like "xoxc-...". Copy it.
+;;
+;; 2. Get the cookie (d)
+;;    The `d' cookie is HttpOnly, so it can't be read from JavaScript. Grab it
+;;    by hand:
+;;      - DevTools -> Application tab (Firefox: Storage)
+;;      - Cookies -> pick the https://app.slack.com domain (or yourteam.slack.com)
+;;      - Find the cookie named `d' and copy its value (a long "xoxd-..." string)
+;;
+;; Store both in ~/.authinfo.gpg as:
+;;   machine yourteam.slack.com login you@example.com password xoxc-...
+;;   machine yourteam.slack.com login you@example.com^cookie password xoxd-...
+;;
+;; Tokens and cookies expire periodically; re-extract them when Slack stops
+;; authenticating. `M-x slack-refresh-token' walks you through it interactively.
+;; ---------------------------------------------------------------------------
+(use-package slack
+  :bind (("C-c S K" . slack-stop)
+         ("C-c S c" . slack-select-rooms)
+         ("C-c S u" . slack-select-unread-rooms)
+         ("C-c S U" . slack-user-select)
+         ("C-c S s" . slack-search-from-messages)
+         ("C-c S J" . slack-jump-to-browser)
+         ("C-c S j" . slack-jump-to-app)
+         ("C-c S e" . slack-insert-emoji)
+         ("C-c S E" . slack-message-edit)
+         ("C-c S r" . slack-message-add-reaction)
+         ("C-c S t" . slack-thread-show-or-create)
+         ("C-c S g" . slack-message-redisplay)
+         ("C-c S G" . slack-conversations-list-update-quick)
+         ("C-c S q" . slack-quote-and-reply)
+         ("C-c S Q" . slack-quote-and-reply-with-link)
+         (:map slack-mode-map
+               (("@" . slack-message-embed-mention)
+                ("#" . slack-message-embed-channel)))
+         (:map slack-thread-message-buffer-mode-map
+               (("C-c '" . slack-message-write-another-buffer)
+                ("@" . slack-message-embed-mention)
+                ("#" . slack-message-embed-channel)))
+         (:map slack-message-buffer-mode-map
+               (("C-c '" . slack-message-write-another-buffer)))
+         (:map slack-message-compose-buffer-mode-map
+               (("C-c '" . slack-message-send-from-buffer)))
+         )
+  :custom
+  (slack-extra-subscribed-channels (mapcar 'intern (list "some-channel")))
+  :config
+  (slack-register-team
+   :name my/slack-team
+   :token (auth-source-pick-first-password
+           :host (concat my/slack-team ".slack.com")
+           :user my/slack-email)
+   :cookie (auth-source-pick-first-password
+            :host (concat my/slack-team ".slack.com")
+            :user (concat my/slack-email "^cookie"))
+   :full-and-display-names t
+   :default t
+   :subscribed-channels nil))
+
+(use-package alert
+  :commands (alert)
+  :init
+  (setq alert-default-style 'notifier))
